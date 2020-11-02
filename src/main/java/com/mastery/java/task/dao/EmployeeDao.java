@@ -1,4 +1,9 @@
 package com.mastery.java.task.dao;
 
-public class EmployeeDao {
+
+import com.mastery.java.task.dao.model.Employee;
+import org.springframework.stereotype.Repository;
+
+@Repository
+public interface EmployeeDao extends CommonJpaDao<Employee> {
 }

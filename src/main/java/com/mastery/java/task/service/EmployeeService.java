@@ -1,4 +1,6 @@
 package com.mastery.java.task.service;
 
-public class EmployeeService {
+import com.mastery.java.task.dao.model.Employee;
+
+public interface EmployeeService extends CommonCrudService<Employee> {
 }
