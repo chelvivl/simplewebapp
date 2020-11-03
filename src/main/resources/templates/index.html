@@ -1,0 +1,225 @@
+<!doctype html>
+<html>
+    <head>
+        <title>Spring Boot AJAX jQuery CRUD</title>
+        <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
+        <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+        <script type="text/javascript">
+        $(document).delegate('#addNew', 'click', function(event) {
+            event.preventDefault();
+            var firstName = $('#firstName').val();
+            var lastName = $('#lastName').val();
+            var departmentId = $('#departmentId').val();
+            var gender = $('#gender').val();
+            var jobTitle = $('#jobTitle').val();
+            var dateOfBirth = $('#dateOfBirth').val();
+            $.ajax({
+                type: "POST",
+                contentType: "application/json; charset=utf-8",
+                url: "http://localhost:8090/simplewebapp/employee",
+                data: JSON.stringify({
+                    'firstName': firstName,
+                    'lastName': lastName,
+                    'departmentId': departmentId,
+                    'gender': gender,
+                    'jobTitle':jobTitle,
+                    'dateOfBirth':dateOfBirth
+                 }),
+                cache: false,
+                success: function(result) {
+                    $("#msg").html( "<span style='color: green'>Employee added successfully</span>" );
+                    window.setTimeout(function(){location.reload()},1000)
+                },
+                error: function(err) {
+                    $("#msg").html( "<span style='color: red'>Name is required</span>" );
+                }
+            });
+        });
+        $(document).delegate('.edit', 'click', function() {
+            var parent = $(this).parent().parent();
+            var id = parent.children("td:nth-child(1)");
+            var firstName = parent.children("td:nth-child(2)");
+            var lastName = parent.children("td:nth-child(3)");
+            var departmentId = parent.children("td:nth-child(4)");
+            var gender = parent.children("td:nth-child(5)");
+            var jobTitle = parent.children("td:nth-child(6)");
+            var dateOfBirth = parent.children("td:nth-child(7)");
+            var buttons = parent.children("td:nth-child(8)");
+            firstName.html("<input type='text' id='txtName' value='" + firstName.html() + "'/>");
+            lastName.html("<input type='text' id='txtName' value='" + lastName.html() + "'/>");
+            departmentId.html("<input type='text' id='txtName' value='" + departmentId.html() + "'/>");
+            gender.html("<input type='text' id='txtName' value='" + gender.html() + "'/>");
+            jobTitle.html("<input type='text' id='txtName' value='" + jobTitle.html() + "'/>");
+            dateOfBirth.html("<input type='text' id='txtName' value='" + dateOfBirth.html() + "'/>");
+            buttons.html("<button id='save'>Save</button>&nbsp;&nbsp;<button class='delete' id='" + id.html() + "'>Delete</button>");
+        });
+        $(document).delegate('#save', 'click', function() {
+            var parent = $(this).parent().parent();
+            var id = parent.children("td:nth-child(1)");
+            var firstName = parent.children("td:nth-child(2)");
+            var lastName = parent.children("td:nth-child(3)");
+            var departmentId = parent.children("td:nth-child(4)");
+            var gender = parent.children("td:nth-child(5)");
+            var jobTitle = parent.children("td:nth-child(6)");
+            var dateOfBirth = parent.children("td:nth-child(7)");
+            var buttons = parent.children("td:nth-child(8)");
+            $.ajax({
+                type: "PUT",
+                contentType: "application/json; charset=utf-8",
+                url: "http://localhost:8090/simplewebapp/employee/" + id.html(),
+                data: JSON.stringify({
+                    'id' : id.html(),
+                    'firstName' : firstName.children("input[type=text]").val(),
+                    'lastName' : lastName.children("input[type=text]").val(),
+                    'departmentId' : departmentId.children("input[type=text]").val(),
+                    'gender' : gender.children("input[type=text]").val(),
+                    'jobTitle' : jobTitle.children("input[type=text]").val(),
+                     'dateOfBirth' : dateOfBirth.children("input[type=text]").val()
+                }),
+                cache: false,
+                success: function() {
+                    firstName.html(firstName.children("input[type=text]").val());
+                    lastName.html(lastName.children("input[type=text]").val());
+                    departmentId.html(departmentId.children("input[type=text]").val());
+                    gender.html(gender.children("input[type=text]").val());
+                    jobTitle.html(jobTitle.children("input[type=text]").val());
+                    dateOfBirth.html(dateOfBirth.children("input[type=text]").val());
+                    buttons.html("<button class='edit' id='" + id.html() + "'>Edit</button>&nbsp;&nbsp;<button class='delete' id='" + id.html() + "'>Delete</button>");
+                },
+                error: function() {
+                    alert("Error")
+                }
+            });
+        });
+        $(document).ready(function() {
+            $.getJSON('http://localhost:8090/simplewebapp/employee', function(json) {
+                var tr=[];
+                for (var i = 0; i < json.length; i++) {
+                    tr.push('<tr>');
+                    tr.push('<td>' + json[i].id + '</td>');
+                    tr.push('<td>' + json[i].firstName + '</td>');
+                    tr.push('<td>' + json[i].lastName + '</td>');
+                    tr.push('<td>' + json[i].departmentId + '</td>');
+                    tr.push('<td>' + json[i].gender + '</td>');
+                    tr.push('<td>' + json[i].jobTitle + '</td>');
+                    tr.push('<td>' + json[i].dateOfBirth + '</td>');
+                    tr.push('<td><button class=\'edit\'>Edit</button>&nbsp;&nbsp;<button class=\'delete\' id=' + json[i].id + '>Delete</button></td>');
+                    tr.push('</tr>');
+                }
+                $('#tableAll').append($(tr.join('')));
+            });
+        });
+        $(document).delegate('.delete', 'click', function() {
+            if (confirm('Do you really want to delete record?')) {
+                var id = $(this).attr('id');
+                var parent = $(this).parent().parent();
+                $.ajax({
+                    type: "DELETE",
+                        url: "http://localhost:8090/simplewebapp/employee/" + id,
+                        cache: false,
+                        success: function() {
+                            parent.fadeOut('slow', function() {
+                                $(this).remove();
+                            });
+                            location.reload(true)
+                        },
+                        error: function() {
+                            alert("Error")
+                        }
+                });
+            }
+        });
+        $(document).delegate('#searchById', 'click', function() {
+           var idColor = document.getElementById('idColor').value;
+           var table = document.getElementById('tableOne');
+           while(table.rows.length > 0) {
+                table.deleteRow(0);
+           }
+           $.ajax({
+                type: "GET",
+                contentType: "application/json; charset=utf-8",
+                url: "http://localhost:8090/simplewebapp/employee/" + idColor,
+                cache: true,
+                success: function(response) {
+                    var tr = [];
+                    tr.push('<tr>');
+                    tr.push('<td>' + response.id + '</td>');
+                    tr.push('<td>' + response.firstName + '</td>');
+                    tr.push('<td>' + response.lastName + '</td>');
+                    tr.push('<td>' + response.departmentId + '</td>');
+                    tr.push('<td>' + response.gender + '</td>');
+                    tr.push('<td>' + response.jobTitle + '</td>');
+                    tr.push('<td>' + response.dateOfBirth + '</td>');
+                    tr.push('<td><button class=\'edit\'>Edit</button>&nbsp;&nbsp;<button class=\'delete\' id=' + response.id + '>Delete</button></td>');
+                    tr.push('</tr>');
+                    $('#tableOne').append($(tr.join('')));
+                }
+           });
+        });
+        </script>
+    </head>
+    <body>
+        <h2>Spring Boot AJAX jQuery CRUD</h2>
+        <p><a class='btn' href="#add" rel="modal:open">Add New Employee</a></p>
+        <table id="tableAll" border="1" cellspacing="0" cellpadding="5">
+            <tr>
+                <th>Id</th>
+                <th>FirsName</th>
+                <th>LastName</th>
+                <th>DepartmentId</th>
+                <th>Gender</th>
+                <th>JobTitle</th>
+                <th>DateOfBirth</th>
+                <th>Action</th>
+            </tr>
+        </table>
+        <div class="container" style="min-height: 500px">
+            <div class="starter-template">
+                <div id="feedback"></div>
+                <form class="form-horizontal" id="search-form">
+                    <div class="form-group form-group-lg">
+                        <label class="col-sm-2 control-label">FindById employee</label>
+                        <div class="col-sm-10">
+                            <input type="text" id="idColor" placeholder="введите текст"/>
+                            <button type="button" id="searchById"
+                            class="btn btn-primary btn-lg" >Search
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <table id="tableOne" border="1" cellspacing="0" cellpadding="5"></table>
+            <form id="add" action="#" class="add_form modal" style="display:none;">
+                <div id='msg'/>
+                <h3>Add a New Employee</h3>
+                <p>
+                    <label>firstName</label>
+                    <input type="text" id="firstName" name="firstName">
+                </p>
+                <p>
+                    <label>lastName</label>
+                    <input type="text" id="lastName" name="lastName">
+                </p>
+                <p>
+                    <label>gender</label>
+                    <input type="text" id="gender" name="gender">
+                </p>
+                <p>
+                    <label>departmentId</label>
+                    <input type="text" id="departmentId" name="departmentId">
+                </p>
+                <p>
+                    <label>jobTitle</label>
+                    <input type="text" id="jobTitle" name="jobTitle">
+                </p>
+                <p>
+                    <label>dateOfBirth</label>
+                    <input type="text" id="dateOfBirth" name="dateOfBirth">
+                </p>
+                <p>
+                    <input type="submit" id="addNew" value="Submit">
+                </p>
+            </form>
+        </div>
+    </body>
+</html>
