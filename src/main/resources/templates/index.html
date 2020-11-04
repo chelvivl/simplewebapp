@@ -59,7 +59,7 @@
             $.ajax({
                 type: "POST",
                 contentType: "application/json; charset=utf-8",
-                url: "http://localhost:8090/simplewebapp/employee",
+                url: "http://localhost:8080/simplewebapp/employee",
                 data: JSON.stringify({
                     'firstName': firstName,
                     'lastName': lastName,
@@ -109,7 +109,7 @@
             $.ajax({
                 type: "PUT",
                 contentType: "application/json; charset=utf-8",
-                url: "http://localhost:8090/simplewebapp/employee/" + id.html(),
+                url: "http://localhost:8080/simplewebapp/employee/" + id.html(),
                 data: JSON.stringify({
                     'id' : id.html(),
                     'firstName' : firstName.children("input[type=text]").val(),
@@ -135,7 +135,7 @@
             });
         });
         $(document).ready(function() {
-            $.getJSON('http://localhost:8090/simplewebapp/employee', function(json) {
+            $.getJSON('http://localhost:8080/simplewebapp/employee', function(json) {
                 var tr=[];
                 for (var i = 0; i < json.length; i++) {
                     tr.push('<tr>');
@@ -158,7 +158,7 @@
                 var parent = $(this).parent().parent();
                 $.ajax({
                     type: "DELETE",
-                        url: "http://localhost:8090/simplewebapp/employee/" + id,
+                        url: "http://localhost:8080/simplewebapp/employee/" + id,
                         cache: false,
                         success: function() {
                             parent.fadeOut('slow', function() {
@@ -181,7 +181,7 @@
            $.ajax({
                 type: "GET",
                 contentType: "application/json; charset=utf-8",
-                url: "http://localhost:8090/simplewebapp/employee/" + idColor,
+                url: "http://localhost:8080/simplewebapp/employee/" + idColor,
                 cache: true,
                 success: function(response) {
                     var tr = [];
