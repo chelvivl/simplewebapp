@@ -20,7 +20,6 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 public class EmployeeServiceTest {
@@ -100,23 +99,7 @@ public class EmployeeServiceTest {
                         LocalDate.of(1997, 8, 12)
                 );
         given(employeeDao.findById(id)).willReturn(Optional.of(employee));
-        final Optional<Employee> expected = employeeService.findById(id);
+        final Employee expected = employeeService.findById(id);
         assertThat(expected, is(IsNull.notNullValue()));
-    }
-    @Test
-    void shouldBeDelete(){
-        MockitoAnnotations.initMocks(this);
-        final Employee employee =
-                new Employee(
-                        "Anastasia",
-                        "Taylor",
-                        Gender.FEMALE,
-                        1L,
-                        "Executive Assistant",
-                        LocalDate.of(1997, 8, 12)
-                );
-        employeeService.delete(employee);
-        employeeService.delete(employee);
-        verify(employeeDao,times(2)).delete(employee);
     }
 }

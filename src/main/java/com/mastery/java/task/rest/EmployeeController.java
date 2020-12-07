@@ -1,7 +1,6 @@
 package com.mastery.java.task.rest;
 
 
-import com.mastery.java.task.dao.model.Employee;
 import com.mastery.java.task.dto.EmployeeDto;
 import com.mastery.java.task.rest.mappers.EmployeeMapper;
 import com.mastery.java.task.service.EmployeeService;
@@ -11,8 +10,7 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
-import org.springframework.lang.NonNull;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -23,75 +21,71 @@ import java.util.List;
 @RequiredArgsConstructor(onConstructor = @__({@Autowired}))
 @Api(tags = "Employee", description = "Employee Management System")
 @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "Success"),
-        @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
-        @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
-        @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
+        @ApiResponse(code = 404, message = "The resource you were trying to reach is not found"),
+        @ApiResponse(code = 500, message = "Internal Server Error ")
 })
 public class EmployeeController {
 
-    @NonNull
     private final EmployeeService employeeService;
-
-    @NonNull
     private final EmployeeMapper employeeMapper;
 
-    @ApiResponse(code = 200, message = "Success",
-            response = EmployeeDto.class, responseContainer = "List")
+
+    @ApiResponse(code = 200, message = "Success ")
     @ApiOperation(value = "View a list of available employees")
     @GetMapping
-    public ResponseEntity<List<EmployeeDto>> getAllEmployee() {
-
-        return ResponseEntity.ok(
-                employeeMapper.toDto(employeeService.findAll()
-                )
-        );
+    public List<EmployeeDto> getAllEmployee() {
+        return employeeMapper.toDto(employeeService.findAll());
     }
 
     @ApiOperation(value = "Get a employee by Id")
+    @ApiResponse(code = 200, message = "Success ")
     @GetMapping("{id}")
-    public ResponseEntity<EmployeeDto> getEmployeeById(
-            @Valid @PathVariable("id") Employee employee) {
+    public EmployeeDto getEmployeeById(
+            @PathVariable("id") Long id) {
 
-        return ResponseEntity.ok(
-                employeeMapper.toDto(employee)
-        );
+        return employeeMapper.toDto(employeeService.findById(id));
     }
 
     @ApiOperation(value = "Delete a employee by Id")
+    @ApiResponse(code = 204, message = "No content ")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping("{id}")
-    public ResponseEntity<EmployeeDto> deleteById(
-            @Valid @PathVariable("id") Employee employee) {
+    public void deleteById(
+            @Valid @PathVariable("id") Long id) {
 
-        employeeService.delete(employee);
-        return ResponseEntity.noContent().build();
+        employeeService.deleteById(id);
     }
 
     @ApiOperation(value = "Add a employee")
+    @ApiResponses({
+            @ApiResponse(code = 201, message = "Created "),
+            @ApiResponse(code = 400, message = "Bad request "),
+    })
+    @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
-    public ResponseEntity<EmployeeDto> createEmployee(
+    public EmployeeDto createEmployee(
             @RequestBody @Valid EmployeeDto employeeDto) {
 
-        return ResponseEntity.ok(
-                employeeMapper.toDto(
-                        employeeService.save(
-                                employeeMapper.toModel(employeeDto)
-                        )
+        return employeeMapper.toDto(
+                employeeService.save(
+                        employeeMapper.toModel(employeeDto)
                 )
         );
     }
 
     @ApiOperation(value = "Update a Feature by Id")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "Success "),
+            @ApiResponse(code = 400, message = "Bad request ")
+    })
     @PutMapping("{id}")
-    public ResponseEntity<EmployeeDto> updateReportDetail(
-            @PathVariable("id") Employee current,
+    public EmployeeDto updateEmployee(
+            @PathVariable("id") Long id,
             @Valid @RequestBody EmployeeDto employeeDto) {
 
-        return ResponseEntity.ok(
-                employeeMapper.toDto(
-                        employeeService.save(
-                                employeeMapper.update(current, employeeDto)
-                        )
+        return employeeMapper.toDto(
+                employeeService.save(
+                        employeeMapper.update(employeeService.findById(id), employeeDto)
                 )
         );
     }
