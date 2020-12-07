@@ -5,7 +5,9 @@ import com.mastery.java.task.dao.model.Employee;
 import com.mastery.java.task.exception.EmployeeServiceException;
 import com.mastery.java.task.exception.NotFoundEmployeeServiceException;
 import com.mastery.java.task.service.EmployeeService;
+import io.swagger.models.auth.In;
 import lombok.RequiredArgsConstructor;
+import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 
@@ -18,10 +20,11 @@ import java.util.stream.StreamSupport;
 public class EmployeeServiceImpl implements EmployeeService {
 
     private final EmployeeDao employeeDao;
-
+    private final Logger logger = Logger.getLogger(EmployeeServiceImpl.class);
 
     @Override
     public List<Employee> findAll() {
+        logger.debug("get all employees");
         try {
             List<Employee> employees = StreamSupport
                     .stream(
@@ -38,6 +41,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Override
     public Employee findById(Long id) {
+        logger.debug("get employee by id = " + id);
         try {
             return employeeDao.findById(id)
                     .orElseThrow(() ->
@@ -49,6 +53,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Override
     public void deleteById(Long id) {
+        logger.debug("delete employee by id = " + id);
         try {
             employeeDao.deleteById(id);
         } catch (DataAccessException ex) {
@@ -58,6 +63,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Override
     public Employee save(Employee employee) {
+        logger.debug("add new employee");
         try {
             return employeeDao.save(employee);
         } catch (DataAccessException ex) {

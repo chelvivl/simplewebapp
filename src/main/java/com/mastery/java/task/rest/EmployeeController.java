@@ -9,6 +9,7 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import lombok.RequiredArgsConstructor;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -28,12 +29,13 @@ public class EmployeeController {
 
     private final EmployeeService employeeService;
     private final EmployeeMapper employeeMapper;
-
+    private final Logger logger = Logger.getLogger(EmployeeController.class);
 
     @ApiResponse(code = 200, message = "Success ")
     @ApiOperation(value = "View a list of available employees")
     @GetMapping
     public List<EmployeeDto> getAllEmployee() {
+        logger.debug("get all employees");
         return employeeMapper.toDto(employeeService.findAll());
     }
 
@@ -42,7 +44,7 @@ public class EmployeeController {
     @GetMapping("{id}")
     public EmployeeDto getEmployeeById(
             @PathVariable("id") Long id) {
-
+        logger.debug("get employee by id");
         return employeeMapper.toDto(employeeService.findById(id));
     }
 
@@ -52,7 +54,7 @@ public class EmployeeController {
     @DeleteMapping("{id}")
     public void deleteById(
             @Valid @PathVariable("id") Long id) {
-
+        logger.debug("delete employee by id");
         employeeService.deleteById(id);
     }
 
@@ -66,6 +68,7 @@ public class EmployeeController {
     public EmployeeDto createEmployee(
             @RequestBody @Valid EmployeeDto employeeDto) {
 
+        logger.debug("create new employee");
         return employeeMapper.toDto(
                 employeeService.save(
                         employeeMapper.toModel(employeeDto)
@@ -83,6 +86,7 @@ public class EmployeeController {
             @PathVariable("id") Long id,
             @Valid @RequestBody EmployeeDto employeeDto) {
 
+        logger.debug("update an employee by id");
         return employeeMapper.toDto(
                 employeeService.save(
                         employeeMapper.update(employeeService.findById(id), employeeDto)

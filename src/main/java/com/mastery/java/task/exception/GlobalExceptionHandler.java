@@ -1,5 +1,6 @@
 package com.mastery.java.task.exception;
 
+import org.apache.log4j.Logger;
 import org.hibernate.exception.JDBCConnectionException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -14,12 +15,16 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 @ControllerAdvice
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
+    private static Logger logger = Logger.getLogger(GlobalExceptionHandler.class);
+
     @Override
     protected ResponseEntity<Object> handleMethodArgumentNotValid(
             MethodArgumentNotValidException ex,
             HttpHeaders headers,
             HttpStatus status,
             WebRequest request) {
+
+        logger.error(String.valueOf(ex), ex);
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
                 .body(new ErrorInfo(
@@ -36,6 +41,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
             HttpStatus status,
             WebRequest request) {
 
+        logger.error(String.valueOf(ex), ex);
         return ResponseEntity
                 .status(status)
                 .body(new ErrorInfo(
@@ -47,6 +53,8 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(NotFoundEmployeeServiceException.class)
     public ResponseEntity<ErrorInfo> handleNotFoundEmployeeServiceException(Exception ex) {
+
+        logger.error(String.valueOf(ex), ex);
         return ResponseEntity
                 .status(HttpStatus.NOT_FOUND)
                 .body(new ErrorInfo(
@@ -58,6 +66,8 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(EmployeeServiceException.class)
     public ResponseEntity<ErrorInfo> handleEmployeeServiceException(Exception ex) {
+
+        logger.error(String.valueOf(ex), ex);
         return ResponseEntity
                 .status(HttpStatus.NOT_FOUND)
                 .body(new ErrorInfo(
@@ -70,6 +80,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(JDBCConnectionException.class)
     public ResponseEntity<ErrorInfo> handleJDBCConnectionException(Exception ex) {
 
+        logger.error(String.valueOf(ex), ex);
         return ResponseEntity
                 .status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(new ErrorInfo(
