@@ -8,10 +8,8 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
-import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,7 +18,6 @@ import java.util.List;
 
 @RestController
 @RequestMapping(value = "/employee", produces = {"application/json"})
-@RequiredArgsConstructor(onConstructor = @__({@Autowired}))
 @Api(tags = "Employee", description = "Employee Management System")
 @ApiResponses(value = {
         @ApiResponse(code = 404, message = "The resource you were trying to reach is not found"),
@@ -31,6 +28,11 @@ public class EmployeeController {
     private final EmployeeService employeeService;
     private final EmployeeMapper employeeMapper;
     private final Logger logger = LoggerFactory.getLogger(EmployeeController.class);
+
+    public EmployeeController(EmployeeService employeeService, EmployeeMapper employeeMapper) {
+        this.employeeService = employeeService;
+        this.employeeMapper = employeeMapper;
+    }
 
     @ApiResponse(code = 200, message = "Success ")
     @ApiOperation(value = "View a list of available employees")

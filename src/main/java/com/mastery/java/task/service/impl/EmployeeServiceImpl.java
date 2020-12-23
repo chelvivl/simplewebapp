@@ -5,7 +5,6 @@ import com.mastery.java.task.dao.model.Employee;
 import com.mastery.java.task.exception.EmployeeServiceException;
 import com.mastery.java.task.exception.NotFoundEmployeeServiceException;
 import com.mastery.java.task.service.EmployeeService;
-import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataAccessException;
@@ -16,11 +15,14 @@ import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 @Service
-@RequiredArgsConstructor
 public class EmployeeServiceImpl implements EmployeeService {
 
     private final EmployeeDao employeeDao;
     private final Logger logger = LoggerFactory.getLogger(EmployeeServiceImpl.class);
+
+    public EmployeeServiceImpl(EmployeeDao employeeDao) {
+        this.employeeDao = employeeDao;
+    }
 
     @Override
     public List<Employee> findAll() {
